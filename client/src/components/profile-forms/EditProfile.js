@@ -1,10 +1,15 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import CreateProfile from '../../actions/profile';
+import { createProfile, getCurrentProfile } from '../../actions/profile';
 
-const CreateProfile = ({ createProfile, history }) => {
+const EditProfile = ({
+    profile: { profile, loading },
+    createProfile,
+    getCurrentProfile,
+    history
+}) => {
     const [formData, setFormData] = useState({
         location: '',
         bio: '',
@@ -16,6 +21,20 @@ const CreateProfile = ({ createProfile, history }) => {
     });
 
     const [displaySocialInputs, toggleSocialInputs] = useState(false);
+
+    useEffect(() => {
+        getCurrentProfile();
+
+        setFormData({
+            location: loading || !profile.location ? '' : profile.location,
+            bio: loading || !profile.bio ? '' : profile.bio,
+            allergies: loading || !profile.allergies ? '' : profile.allergies.join(','),
+            twitter: loading || !profile.social ? '' : profile.social.twitter,
+            facebook: loading || !profile.social ? '' : profile.social.facebook,
+            youtube: loading || !profile.social ? '' : profile.social.youtube,
+            instagram: loading || !profile.social ? '' : profile.social.instagram
+        })
+    })
 
     const {
         location,
@@ -32,7 +51,7 @@ const CreateProfile = ({ createProfile, history }) => {
 
     const onSubmit = e => {
         e.preventDefault();
-        createProfile(formData, history)
+        createProfile(formData, history, true);
     };
 
     return (
@@ -65,7 +84,7 @@ const CreateProfile = ({ createProfile, history }) => {
                         onChange={e => onChange(e)}
                     />
                     <small className='form-text'>
-                        Please use comma separated values (eg. Milk, Wheat)
+                        Please use comma separated values (eg. Gluten, Dairy)
                     </small>
                 </div>
                 <div className='form-group'>
@@ -138,7 +157,7 @@ const CreateProfile = ({ createProfile, history }) => {
                 )}
 
                 <input type='submit' className='btn btn-primary my-1' />
-                <Link className='btn btn-light my-1' Link to='/dashboard'>
+                <Link className='btn btn-light my-1' to='/dashboard'>
                     Go Back
                 </Link>
             </form>
@@ -146,11 +165,17 @@ const CreateProfile = ({ createProfile, history }) => {
     );
 };
 
-CreateProfile.propTypes = {
-    createProfile: PropTypes.func.isRequired
+EditProfile.propTypes = {
+    createProfile: PropTypes.func.isRequired,
+    getCurrentProfile: PropTypes.func.isRequired,
+    profile: PropTypes.object.isRequired
 };
 
+const mapStateToProps = state => ({
+    profile: state.profile
+});
+
 export default connect(
-    null,
-    { createProfile }
-)(withRouter(CreateProfile));
+    mapStateToProps,
+    { createProfile, getCurrentProfile }
+)(withRouter(EditProfile));
