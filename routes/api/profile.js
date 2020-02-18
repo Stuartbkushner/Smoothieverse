@@ -5,6 +5,7 @@ const { check, validationResult } = require('express-validator');
 
 const Profile = require('../../models/Profile');
 const User = require('../../models/User');
+const Post = require('../../models/Post');
 
 // @route    GET api/profile/me
 // @desc     Get current users profile
@@ -35,7 +36,7 @@ router.post(
   [
     auth,
     [
-      check('status', 'Status is required')
+      check('diets', 'Diets are required')
         .not()
         .isEmpty(),
       check('allergies', 'Allergies are required')
@@ -52,6 +53,7 @@ router.post(
     const {
       location,
       bio,
+      diets,
       allergies,
       youtube,
       facebook,
@@ -65,6 +67,9 @@ router.post(
     profileFields.user = req.user.id;
     if (location) profileFields.location = location;
     if (bio) profileFields.bio = bio;
+    if (diets) {
+      profileFields.diets = diets.split(',').map(diet => diet.trim());
+    }
     if (allergies) {
       profileFields.allergies = allergies.split(',').map(allergy => allergy.trim());
     }
@@ -142,7 +147,8 @@ router.get('/user/:user_id', async (req, res) => {
 // @access   Private
 router.delete('/', auth, async (req, res) => {
   try {
-    // @todo - remove users posts
+    // Remove user posts
+    await Post.deleteMany({ user: req.user.id });
 
     // Remove profile
     await Profile.findOneAndRemove({ user: req.user.id });

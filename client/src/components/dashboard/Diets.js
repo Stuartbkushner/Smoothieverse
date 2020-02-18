@@ -1,12 +1,19 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { deleteDiet } from '../../actions/profile';
 
-const Diet = ({ diet }) => {
+const Diet = ({ diet, deleteDiet }) => {
     const diets = diet.map(diet => (
         <tr key={diet._id}>
             <td>{diet.name}</td>
             <td>
-                <button className='btn btn-danger'>Delete</button>
+            <button
+                onClick={() => deleteDiet(diet._id)}
+                className='btn btn-danger'
+            >
+                Delete
+            </button>
             </td>
         </tr>
     ));
@@ -28,7 +35,11 @@ const Diet = ({ diet }) => {
 };
 
 Diet.propTypes = {
-    diets: PropTypes.array.isRequired
+    diets: PropTypes.array.isRequired,
+    deleteDiet: PropTypes.func.isRequired
 };
 
-export default Diet;
+export default connect(
+    null,
+    { deleteDiet }
+)(Diet);
