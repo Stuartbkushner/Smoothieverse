@@ -4,8 +4,9 @@ import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
 import Spinner from '../layout/Spinner';
 import DashboardActions from './DashboardActions';
-
 import { getCurrentProfile } from '../../actions/profile';
+import Diet from './Diets';
+import Allergy from './Allergies';
 
 const Dashboard = ({
   getCurrentProfile,
@@ -27,6 +28,8 @@ const Dashboard = ({
               {profile !== null ? (
                 <Fragment>
                     <DashboardActions />
+                    <Allergy allergies={profile.allergies} />
+                    <Diet diets={profile.diets} />
                 </Fragment>
           ) : (
                       <Fragment>
