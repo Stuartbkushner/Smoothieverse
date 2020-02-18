@@ -12,6 +12,7 @@ import AddDiets from './components/profile-forms/AddDiets.js';
 import AddAllergies from './components/profile-forms/AddAllergies.js';
 import Profiles from './components/profiles/Profiles';
 import Profile from './components/profile/Profile';
+import Posts from './components/posts/Posts';
 import PrivateRoute from './components/routing/PrivateRoute';
 
 // Redux
@@ -44,7 +45,7 @@ const App = () => {
               <Route exact path='/register' component={Register} />
               <Route exact path='/login' component={Login} />
               <Route exact path='/profiles' component={Profiles} />
-              <Route exact path='/profile/:id' component={Profiles} />
+              <Route exact path='/profile/:id' component={Profile} />
               <PrivateRoute exact path='/dashboard' component={Dashboard} />
               <PrivateRoute
                 exact
@@ -66,6 +67,7 @@ const App = () => {
                 path='/add-allergies'
                 component={AddAllergies}
               />
+              <PrivateRoute exact path='/posts' component={Posts} />
             </Switch>
           </section>
         </Fragment>
