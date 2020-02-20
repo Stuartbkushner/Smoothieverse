@@ -4,37 +4,37 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createProfile, getCurrentProfile } from '../../actions/profile';
 
+const initialState = {
+    location: '',
+    bio: '',
+    diets: '',
+    allergies: '',
+    youtube: '',
+    twitter: '',
+    facebook: '',
+    instagram: ''
+};
+
 const EditProfile = ({
     profile: { profile, loading },
     createProfile,
     getCurrentProfile,
     history
 }) => {
-    const [formData, setFormData] = useState({
-        location: '',
-        bio: '',
-        allergies: '',
-        youtube: '',
-        twitter: '',
-        facebook: '',
-        instagram: ''
-    });
+    const [formData, setFormData] = useState(initialState);
 
     const [displaySocialInputs, toggleSocialInputs] = useState(false);
 
     useEffect(() => {
-        getCurrentProfile();
-
-        setFormData({
-            location: loading || !profile.location ? '' : profile.location,
-            bio: loading || !profile.bio ? '' : profile.bio,
-            allergies: loading || !profile.allergies ? '' : profile.allergies.join(','),
-            twitter: loading || !profile.social ? '' : profile.social.twitter,
-            facebook: loading || !profile.social ? '' : profile.social.facebook,
-            youtube: loading || !profile.social ? '' : profile.social.youtube,
-            instagram: loading || !profile.social ? '' : profile.social.instagram
-        })
-    }, [loading, getCurrentProfile]);
+        if (!profile) getCurrentProfile();
+        if (!loading) {
+            const profileData = { ...initialState };
+            for (const key in profile) {
+                if (key in profileData) profileData[key] = profile[key];
+            }
+            setFormData(profileData);
+        }
+    }, [loading, getCurrentProfile, profile]);
 
     const {
         location,
@@ -56,11 +56,10 @@ const EditProfile = ({
 
     return (
         <Fragment>
-            <h1 className='large text-primary'>Create Your Profile</h1>
+            <h1 className='large text-primary'>Edit Your Profile</h1>
             <p className='lead'>
-                <i className='fas fa-user' /> Let's get some information to make your
-                profile stand out
-      </p>
+            <i className='fas fa-user' /> Add some changes to your profile
+            </p>
             <small>* = required field</small>
             <form className='form' onSubmit={e => onSubmit(e)}>
                 <div className='form-group'>
@@ -72,7 +71,7 @@ const EditProfile = ({
                         onChange={e => onChange(e)}
                     />
                     <small className='form-text'>
-                        City & state suggested (eg. Boston, MA)
+                       Where are you from?
                     </small>
                 </div>
                 <div className='form-group'>
@@ -104,7 +103,7 @@ const EditProfile = ({
                         className='btn btn-light'
                     >
                         Add Social Network Links
-          </button>
+                    </button>
                     <span>Optional</span>
                 </div>
 
