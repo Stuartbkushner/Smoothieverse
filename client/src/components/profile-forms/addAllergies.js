@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from 'react';
-import { withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { addAllergies } from '../../actions/profile';
@@ -8,8 +8,6 @@ const AddAllergies = ({ addAllergies, history }) => {
     const [formData, setFormData] = useState({
         allergy: ''
     });
-
-    const [toDateDisabled, toggleDisabled] = useState(false);
 
     const { allergy } = formData;
 
@@ -40,9 +38,9 @@ const AddAllergies = ({ addAllergies, history }) => {
                     />
                 </div>
                 <input type='submit' className='btn btn-primary my-1' />
-                <a className='btn btn-light my-1' Link to='/dashboard'>
+                <Link className='btn btn-light my-1' to='/dashboard'>
                     Go Back
-                </a>
+                </Link>
             </form>
         </Fragment>
     );

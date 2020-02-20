@@ -193,18 +193,7 @@ router.put(
 router.delete('/diet/:diet_id', auth, async (req, res) => {
   try {
       const foundProfile = await Profile.findOne({ user: req.user.id });
-      const dietIds = foundProfile.diets.map(diet => diet._id.toString());
-      const removeIndex = dietIds.indexOf(req.params.diet_id);
-      if (removeIndex === -1) {
-          return res.status(500).json({ msg: 'Server error' });
-      } else {
-          foundProfile.diets.splice(
-              removeIndex,
-              1
-          );
-          await foundProfile.save();
-          return res.status(200).json(foundProfile);
-      }
+      foundProfile.diets = foundProfile.diets.filter(diet => diet._id.toString() !== req.params.group_id);
   } catch (error) {
       console.error(error);
       return res.status(500).json({ msg: 'Server error' });
