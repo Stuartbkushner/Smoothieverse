@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const config = require('config');
+const request = require('request');
 const auth = require('../../middleware/auth');
 const { check, validationResult } = require('express-validator');
 
@@ -12,10 +14,9 @@ const Post = require('../../models/Post');
 // @access   Private
 router.get('/me', auth, async (req, res) => {
   try {
-    const profile = await Profile.findOne({ user: req.user.id }).populate(
-      'user',
-      ['name', 'avatar']
-    );
+    const profile = await Profile.findOne({
+      user: req.user.id
+  }).populate('user', ['name', 'avatar']);
 
     if (!profile) {
       return res.status(400).json({ msg: 'There is no profile for this user' });
@@ -83,24 +84,13 @@ router.post(
     if (instagram) profileFields.social.instagram = instagram;
 
     try {
-      let profile = await Profile.findOne({ user: req.user.id });
-
-      if (profile) {
-        // Update
-        profile = await Profile.findOneAndUpdate(
-          { user: req.user.id },
-          { $set: profileFields },
-          { new: true }
-        );
-
-        return res.json(profile);
-      }
-
-      // Create
-      profile = new Profile(profileFields);
-
-      await profile.save();
-      res.json(profile);
+            // Using upsert option (creates new doc if no match is found):
+            let profile = await Profile.findOneAndUpdate(
+              { user: req.user.id },
+              { $set: profileFields },
+              { new: true, upsert: true }
+          );
+    res.json(profile);
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
@@ -162,6 +152,64 @@ router.delete('/', auth, async (req, res) => {
   }
 });
 
+// @route    PUT api/profile/diets
+// @desc     Add a diet
+// @access   Private
+router.put(
+  '/diets',
+  async (req, res) => {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+          return res.status(400).json({ errors: errors.array() });
+      }
+
+      const {
+          name
+      } = req.body;
+
+      const newDiet = {
+          name
+      };
+
+      try {
+          const profile = await Profile.findOne({ user: req.user.id });
+
+          profile.diet.unshift(newDiet);
+
+          await profile.save();
+
+          res.json(profile);
+      } catch (err) {
+          console.error(err.message);
+          res.status(500).send('Server Error');
+      }
+  }
+);
+
+// @route    DELETE api/profile/diet
+// @desc     Remove a diet you are no longer on
+// @access   Private
+
+router.delete('/diet/:diet_id', auth, async (req, res) => {
+  try {
+      const foundProfile = await Profile.findOne({ user: req.user.id });
+      const dietIds = foundProfile.diets.map(diet => diet._id.toString());
+      const removeIndex = dietIds.indexOf(req.params.diet_id);
+      if (removeIndex === -1) {
+          return res.status(500).json({ msg: 'Server error' });
+      } else {
+          foundProfile.diets.splice(
+              removeIndex,
+              1
+          );
+          await foundProfile.save();
+          return res.status(200).json(foundProfile);
+      }
+  } catch (error) {
+      console.error(error);
+      return res.status(500).json({ msg: 'Server error' });
+  }
+});
 
 
 
