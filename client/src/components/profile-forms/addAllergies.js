@@ -18,19 +18,19 @@ const AddAllergies = ({ addAllergies, history }) => {
 
     return (
         <Fragment>
-            <h1 class='large text-primary'>What are you allergic to?</h1>
-            <p class='lead'>
-                <i class='fas fa-code-branch' /> Add your allergies
+            <h1 className='large text-primary'>What are you allergic to?</h1>
+            <p className='lead'>
+                <i className='fas fa-code-branch' /> Add your allergies
       </p>
             <small>* = required field</small>
             <form
-                class='form'
+                className='form'
                 onSubmit={e => {
                     e.preventDefault();
                     AddAllergies(formData, history);
                 }}
             >
-                <div class='form-group'>
+                <div className='form-group'>
                     <input
                         type='text'
                         placeholder='* Allergy'
@@ -39,8 +39,8 @@ const AddAllergies = ({ addAllergies, history }) => {
                         onChange={e => onChange(e)}
                     />
                 </div>
-                <input type='submit' class='btn btn-primary my-1' />
-                <a class='btn btn-light my-1' Link to='/dashboard'>
+                <input type='submit' className='btn btn-primary my-1' />
+                <a className='btn btn-light my-1' Link to='/dashboard'>
                     Go Back
                 </a>
             </form>

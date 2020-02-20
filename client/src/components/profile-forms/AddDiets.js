@@ -20,19 +20,19 @@ const AddDiets = ({ addDiets, history }) => {
 
     return (
         <Fragment>
-            <h1 class='large text-primary'>Add Your Favorite Bands</h1>
-            <p class='lead'>
-                <i class='fas fa-code-branch' /> Add any bands you like
+            <h1 className='large text-primary'>Add Your Favorite Bands</h1>
+            <p className='lead'>
+                <i className='fas fa-code-branch' /> Add any bands you like
             </p>
             <small>* = required field</small>
             <form
-                class='form'
+                className='form'
                 onSubmit={e => {
                     e.preventDefault();
                     addDiets(formData, history);
                 }}
             >
-                <div class='form-group'>
+                <div className='form-group'>
                     <input
                         type='text'
                         placeholder='* Diet'
@@ -41,8 +41,8 @@ const AddDiets = ({ addDiets, history }) => {
                         onChange={e => onChange(e)}
                     />
                 </div>
-                <input type='submit' class='btn btn-primary my-1' />
-                <a class='btn btn-light my-1' href='dashboard.html'>
+                <input type='submit' className='btn btn-primary my-1' />
+                <a className='btn btn-light my-1' href='dashboard.html'>
                     Go Back
         </a>
             </form>
